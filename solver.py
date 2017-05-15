@@ -264,6 +264,8 @@ def load_multiplier_file(filename):
 
 if __name__ == "__main__":
     game_board = [["-" for x in range(BOARD_WIDTH)] for y in range(BOARD_HEIGHT)]
+    multipliers = load_multiplier_file("multipliers.csv")
+    word_list = load_dict("dictionary.txt")
     if len(sys.argv) > 1:
         try:
             game_board = load_board(sys.argv[1])
@@ -282,14 +284,12 @@ if __name__ == "__main__":
     if save_name != "":
         save_board(save_name, game_board)
 
-    multipliers = load_multiplier_file("multipliers.csv")
-
     letts_avail = input("Enter available letters as one string (? for blank):").upper()
     unknowns = letts_avail.count("?")
     letts_avail.replace("?", "")
     letts_avail = list(letts_avail)
     print("Checking for possible word additions...")
-    word_list = load_dict("dictionary.txt")
+
 
     horiz_possible_words = []
     for word in word_list:

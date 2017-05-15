@@ -2,7 +2,7 @@
 Finds optimal words to play in Words with Friends (Scrabble) given board
  and letters in hand.
 
-Uses the dictionary word list for scrabble found [here](https://github.com/jonbcard/scrabble-bot/blob/master/src/dictionary.txt).
+Uses the TWL06 dictionary word list for scrabble found [here](https://github.com/jonbcard/scrabble-bot/blob/master/src/dictionary.txt).
 
 ### Usage
 
