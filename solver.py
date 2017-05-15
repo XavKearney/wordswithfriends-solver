@@ -296,7 +296,11 @@ if __name__ == "__main__":
 
     new_board = game_board
     while new_board:
-        print(get_board_words(game_board))
+        boards_words = get_board_words(game_board)
+        if check_all_words_valid(boards_words,word_list):
+            print(boards_words)
+        else:
+            print("Word on board not valid!")
         print_board(game_board)
 
         new_board = get_new_word(game_board)
@@ -320,8 +324,9 @@ if __name__ == "__main__":
     vert_thread = threading.Thread(target=search_words,
                                     args=(word_list, game_board, False, letts_avail, unknowns, vert_possible_words))
     vert_thread.start()
-    while threading.enumerate():
-        pass
+    horiz_thread.join()
+    if vert_thread in threading.enumerate():
+        vert_thread.join()
 
     horiz_possible_words = sorted(horiz_possible_words, key=lambda tup: tup[2],reverse=True)
     vert_possible_words = sorted(vert_possible_words, key=lambda tup: tup[2],reverse=True)
