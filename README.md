@@ -37,3 +37,8 @@ Given the naivety of the algorithm, it takes a minute or two to find
 every valid move given the current board state and letters in the
 player's hand.
 
+
+### TODO
+* Scoring needs to be perfected - it doesn't exactly follow the real rules.
+* Some of the code could perhaps be refactored to clean up the horizontal/vertical
+elements to just use transposition instead.
