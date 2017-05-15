@@ -1,5 +1,6 @@
 import csv
 import sys
+import threading
 
 BOARD_WIDTH = 11
 BOARD_HEIGHT = 11
@@ -260,6 +261,29 @@ def load_multiplier_file(filename):
     return multipliers
 
 
+def search_words(word_list, game_board, horizontal, letts_avail, unknowns, valid_words):
+    if horizontal:
+        for word in word_list:
+            for x in range(BOARD_WIDTH-len(word)):
+                for y in range(BOARD_HEIGHT):
+                    position = (x, y)
+                    if check_letters_possible(game_board,word,position,horizontal,letts_avail,unknowns):
+                        if check_placement_valid(game_board, word, position, horizontal, word_list):
+                            score = get_word_score(game_board,word,position,horizontal,multipliers)
+                            valid_words.append((word, position, score))
+                            print(word + " at " + str(position) + " for " + str(score) + " points!")
+    else:
+        for word in word_list:
+            for y in range(BOARD_HEIGHT-len(word)):
+                for x in range(BOARD_WIDTH):
+                    position = (x, y)
+                    if check_letters_possible(game_board,word,position,horizontal,letts_avail,unknowns):
+                        if check_placement_valid(game_board, word, position, horizontal, word_list):
+                            score = get_word_score(game_board,word,position,horizontal,multipliers)
+                            valid_words.append((word, position, score))
+                            print(word + " at " + str(position) + " for " + str(score) + " points!")
+
+
 if __name__ == "__main__":
     game_board = [["-" for y in range(BOARD_HEIGHT)] for x in range(BOARD_WIDTH)]
     multipliers = load_multiplier_file("multipliers.csv")
@@ -289,25 +313,15 @@ if __name__ == "__main__":
     print("Checking for possible word additions...")
 
     horiz_possible_words = []
-    for word in word_list:
-        for x in range(BOARD_WIDTH-len(word)):
-            for y in range(BOARD_HEIGHT):
-                position = (x, y)
-                if check_letters_possible(game_board,word,position,True,letts_avail,unknowns):
-                    if check_placement_valid(game_board, word, position, True, word_list):
-                        score = get_word_score(game_board,word,position,True,multipliers)
-                        horiz_possible_words.append((word, position, score))
-                        print(word + " at " + str(position) + " for " + str(score) + " points!")
+    horiz_thread = threading.Thread(target=search_words,
+                                    args=(word_list, game_board, True, letts_avail, unknowns, horiz_possible_words))
+    horiz_thread.start()
     vert_possible_words = []
-    for word in word_list:
-        for y in range(BOARD_HEIGHT-len(word)):
-            for x in range(BOARD_WIDTH):
-                position = (x, y)
-                if check_letters_possible(game_board,word,position,False,letts_avail,unknowns):
-                    if check_placement_valid(game_board, word, position, False, word_list):
-                        score = get_word_score(game_board,word,position,False,multipliers)
-                        vert_possible_words.append((word, position, score))
-                        print(word + " at " + str(position) + " for " + str(score) + " points!")
+    vert_thread = threading.Thread(target=search_words,
+                                    args=(word_list, game_board, False, letts_avail, unknowns, vert_possible_words))
+    vert_thread.start()
+    while threading.enumerate():
+        pass
 
     horiz_possible_words = sorted(horiz_possible_words, key=lambda tup: tup[2],reverse=True)
     vert_possible_words = sorted(vert_possible_words, key=lambda tup: tup[2],reverse=True)
