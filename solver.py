@@ -93,6 +93,8 @@ def check_word_fits(word, position, horizontal):
     if (horizontal and start_x + len(word) > BOARD_WIDTH)\
             or (not horizontal and start_y + len(word) > BOARD_HEIGHT):
         return False
+    else:
+        return True
 
 
 def check_word_joins(board, word, position, horizontal):
@@ -107,14 +109,10 @@ def check_word_joins(board, word, position, horizontal):
         for i in range(len(word) + 2):
             if 0 < (start_y - 1) + i < BOARD_HEIGHT and board[start_x][start_y - 1 + i] != "-":
                 attaches_to_word = True
-    if not attaches_to_word:
-        return False
-
+    return attaches_to_word
 
 
 def check_placement_valid(board, word, position, horizontal, dict_words):
-    start_x = position[0]
-    start_y = position[1]
     # check if word fits on board
     if not check_word_fits(word, position, horizontal):
         return False
@@ -263,7 +261,7 @@ def load_multiplier_file(filename):
 
 
 if __name__ == "__main__":
-    game_board = [["-" for x in range(BOARD_WIDTH)] for y in range(BOARD_HEIGHT)]
+    game_board = [["-" for y in range(BOARD_HEIGHT)] for x in range(BOARD_WIDTH)]
     multipliers = load_multiplier_file("multipliers.csv")
     word_list = load_dict("dictionary.txt")
     if len(sys.argv) > 1:
@@ -289,7 +287,6 @@ if __name__ == "__main__":
     letts_avail.replace("?", "")
     letts_avail = list(letts_avail)
     print("Checking for possible word additions...")
-
 
     horiz_possible_words = []
     for word in word_list:
