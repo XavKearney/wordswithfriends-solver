@@ -1,6 +1,7 @@
 import csv
 import sys
 import threading
+import time
 
 BOARD_WIDTH = 11
 BOARD_HEIGHT = 11
@@ -102,21 +103,27 @@ def check_word_joins(board, word, position, horizontal):
     start_x = position[0]
     start_y = position[1]
     attaches_to_word = False
+    word_len = len(word)
     if horizontal:
-        for i in range(len(word) + 2):
+        for i in range(word_len + 2):
             if 0 < (start_x - 1) + i < BOARD_WIDTH and board[start_x - 1 + i][start_y] != "-":
                 attaches_to_word = True
+            elif i in range(word_len) and start_y >= 1 and board[start_x + i][start_y - 1] != "-":
+                attaches_to_word = True
+            elif i in range(word_len) and start_y <= 9 and board[start_x + i][start_y + 1] != "-":
+                attaches_to_word = True
     else:
-        for i in range(len(word) + 2):
+        for i in range(word_len + 2):
             if 0 < (start_y - 1) + i < BOARD_HEIGHT and board[start_x][start_y - 1 + i] != "-":
+                attaches_to_word = True
+            elif start_x >= 1 and i in range(word_len) and board[start_x - 1][start_y + i] != "-":
+                attaches_to_word = True
+            elif start_x <= 9 and i in range(word_len) and board[start_x + 1][start_y + i] != "-":
                 attaches_to_word = True
     return attaches_to_word
 
 
 def check_placement_valid(board, word, position, horizontal, dict_words):
-    # check if word fits on board
-    if not check_word_fits(word, position, horizontal):
-        return False
     # check if word overwrites any current words
     if not check_overwrite_word(board, word, position, horizontal):
         return False
@@ -325,11 +332,13 @@ if __name__ == "__main__":
     vert_possible_words = []
     vert_thread = threading.Thread(target=search_words,
                                     args=(word_list, game_board, False, letts_avail, unknowns, vert_possible_words))
+    start = time.time()
     vert_thread.start()
     horiz_thread.join()
     if vert_thread in threading.enumerate():
         vert_thread.join()
-
+    t_elapsed = time.time() - start
+    print("Found {} words in {}s".format(len(horiz_possible_words)+len(vert_possible_words), t_elapsed))
     horiz_possible_words = sorted(horiz_possible_words, key=lambda tup: tup[2],reverse=True)
     vert_possible_words = sorted(vert_possible_words, key=lambda tup: tup[2],reverse=True)
     print(horiz_possible_words[:10])
