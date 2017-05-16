@@ -163,7 +163,7 @@ def get_board_words(board):
     return words
 
 
-def get_word_score(board, word, position, horizontal, multipliers):
+def get_word_score(board, chk_word, position, horizontal, multipliers):
     sum = 0
     start_x = position[0]
     start_y = position[1]
@@ -171,32 +171,34 @@ def get_word_score(board, word, position, horizontal, multipliers):
     double_word = False
     letter_mults = ["1","2","3"]
     word_mults = ["D","T"]
+
+
     if horizontal:
-        for i in range(len(word)):
+        for i in range(len(chk_word)):
             mult = multipliers[start_x+i][start_y]
-            if mult in letter_mults:
-                sum += LETTER_SCORES[word[i]] * int(mult)
-            elif mult in word_mults:
+            if mult in letter_mults and board[start_x+i][start_y] != chk_word[i]:
+                sum += LETTER_SCORES[chk_word[i]] * int(mult)
+            elif mult in word_mults and board[start_x+i][start_y] != chk_word[i]:
                 if mult == "D":
                     double_word = True
                 else:
                     triple_word = True
-                sum += LETTER_SCORES[word[i]]
+                sum += LETTER_SCORES[chk_word[i]]
             else:
-                sum += LETTER_SCORES[word[i]]
+                sum += LETTER_SCORES[chk_word[i]]
     else:
-        for i in range(len(word)):
+        for i in range(len(chk_word)):
             mult = multipliers[start_x][start_y+i]
-            if mult in letter_mults:
-                sum += LETTER_SCORES[word[i]] * int(mult)
-            elif mult in word_mults:
+            if mult in letter_mults and board[start_x][start_y+i] != chk_word[i]:
+                sum += LETTER_SCORES[chk_word[i]] * int(mult)
+            elif mult in word_mults and board[start_x][start_y+i] != chk_word[i]:
                 if mult == "D":
                     double_word = True
                 else:
                     triple_word = True
-                sum += LETTER_SCORES[word[i]]
+                sum += LETTER_SCORES[chk_word[i]]
             else:
-                sum += LETTER_SCORES[word[i]]
+                sum += LETTER_SCORES[chk_word[i]]
     if double_word:
         sum *= 2
     if triple_word:
@@ -204,10 +206,10 @@ def get_word_score(board, word, position, horizontal, multipliers):
     # check if added any new word
     current_board_words = get_board_words(board)
     test_board = [[board[x][y] for y in range(BOARD_HEIGHT)] for x in range(BOARD_WIDTH)]
-    test_board = add_word_to_board(test_board, word, position, horizontal)
+    test_board = add_word_to_board(test_board, chk_word, position, horizontal)
     new_board_words = get_board_words(test_board)
     for board_word in new_board_words:
-        if board_word not in current_board_words and board_word != word:
+        if board_word not in current_board_words and chk_word not in board_word:
             for letter in board_word:
                 sum += LETTER_SCORES[letter]
     return sum
