@@ -237,6 +237,8 @@ def check_letters_possible(board, word, position, horizontal, letters_have, unkn
                 continue
             else:
                 unknowns_used += 1
+                if unknowns_used > unknowns:
+                    return False
     else:
         for i in range(len(word)):
             if board[start_x][start_y+i] == "-" and word[i] in letters_available:
@@ -246,6 +248,8 @@ def check_letters_possible(board, word, position, horizontal, letters_have, unkn
                 continue
             else:
                 unknowns_used += 1
+                if unknowns_used > unknowns:
+                    return False
     if letters_used > 0 and unknowns_used <= unknowns:
         return True
     else:
