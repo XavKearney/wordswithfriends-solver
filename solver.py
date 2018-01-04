@@ -3,11 +3,11 @@ import sys
 import threading
 import time
 
-BOARD_WIDTH = 11
-BOARD_HEIGHT = 11
+BOARD_WIDTH = 15
+BOARD_HEIGHT = 15
 
-LETTER_SCORES = {"A":1,"B":4,"C":4,"D":2,"E":1,"F":4,"G":3,"H":3,"I":1,"J":10,"K":5,"L":2,"M":4,"N":2,"O":1,"P":4,
-                 "Q": 10,"R":1,"S":1,"T":1,"U":2,"V":5,"W":4,"X":8,"Y":3,"Z":10}
+LETTER_SCORES = {"A":1,"B":3,"C":3,"D":2,"E":1,"F":4,"G":2,"H":4,"I":1,"J":8,"K":5,"L":1,"M":3,"N":2,"O":1,"P":3,
+                 "Q": 10,"R":1,"S":1,"T":1,"U":1,"V":4,"W":4,"X":8,"Y":4,"Z":10}
 
 
 def print_board(board):
@@ -342,7 +342,7 @@ if __name__ == "__main__":
     if vert_thread in threading.enumerate():
         vert_thread.join()
     t_elapsed = time.time() - start
-    print("Found {} words in {}s".format(len(horiz_possible_words)+len(vert_possible_words), t_elapsed))
+    print("Found {} words in {:.2f}s".format(len(horiz_possible_words)+len(vert_possible_words), t_elapsed))
     horiz_possible_words = sorted(horiz_possible_words, key=lambda tup: tup[2],reverse=True)
     vert_possible_words = sorted(vert_possible_words, key=lambda tup: tup[2],reverse=True)
     print(horiz_possible_words[:10])
